@@ -86,4 +86,4 @@ cd headless-url-exception-manager
 
 ## License
 
-This plugin is open-source and licensed under the [MIT License](LICENSE).
+This plugin is open-source and licensed under the [MIT License](https://opensource.org/license/mit).
