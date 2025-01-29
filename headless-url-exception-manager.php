@@ -113,6 +113,12 @@ function headless_url_exception_ignored_urls_filter($will_redirect, $new_url)
 
         // Skip redirection
         foreach ($ignored_urls_array as $ignored_url) {
+
+            // Skip redirect if regex matches
+            if (handle_regex_exceptions($ignored_url, $current_request)) {
+                return false;
+            }
+
             // If it's a path, use strpos for normal URL path matching
             if (strpos($current_request, trim($ignored_url, '/')) !== false) {
                 return false;
@@ -122,4 +128,13 @@ function headless_url_exception_ignored_urls_filter($will_redirect, $new_url)
 
     // For no exception match, proceed with redirection
     return $will_redirect;
+}
+
+function handle_regex_exceptions($regex, $current_request)
+{
+    $trimmed_regex = ltrim(rtrim(trim($regex), '/'), '/');
+    if (!empty($trimmed_regex) && preg_match("|{$trimmed_regex}|", $current_request)) {
+        return true;
+    }
+    return false;
 }
