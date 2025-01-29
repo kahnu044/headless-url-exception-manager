@@ -45,7 +45,7 @@ function headless_url_exception_settings()
 {
     register_setting('headless_url_exception_manager_options_group', 'headless_url_exception_ignored_urls', array(
         'type' => 'string',
-        'sanitize_callback' => 'sanitize_textarea_field',
+        'sanitize_callback' => 'headless_url_exception_sanitize_urls',
         'default' => ''
     ));
 
@@ -64,6 +64,37 @@ function headless_url_exception_ignored_urls_render()
 {
     $ignored_urls = get_option('headless_url_exception_ignored_urls', '');
     echo '<textarea name="headless_url_exception_ignored_urls" rows="10" class="regular-text">' . esc_textarea($ignored_urls) . '</textarea>';
+}
+
+// Sanitize the input URLs to handle full URLs, trailing slashes
+function headless_url_exception_sanitize_urls($input)
+{
+    // Split by new line to get each URL separately
+    $urls = explode("\n", $input);
+    $sanitized_urls = array();
+
+    foreach ($urls as $url) {
+        $url = trim($url);
+
+        // get only the path from full URL
+        $parsed_url = parse_url($url);
+        if (isset($parsed_url['path'])) {
+            $url = $parsed_url['path'];
+        }
+
+        // Remove leading and trailing slashes
+        $url = trim($url, '/');
+
+        // Add slashes back
+        if (!preg_match('/^\/.*\/$/', $url)) {
+            $url = '/' . $url;
+        }
+
+        $sanitized_urls[] = $url;
+
+    }
+
+    return implode("\n", $sanitized_urls);
 }
 
 add_filter('headless_mode_will_redirect', 'headless_url_exception_ignored_urls_filter', 10, 2);
