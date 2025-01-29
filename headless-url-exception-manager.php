@@ -63,3 +63,29 @@ function headless_url_exception_ignored_urls_render()
     $ignored_urls = get_option('headless_url_exception_ignored_urls', '');
     echo '<textarea name="headless_url_exception_ignored_urls" rows="10" class="regular-text">' . esc_textarea($ignored_urls) . '</textarea>';
 }
+
+add_filter('headless_mode_will_redirect', 'headless_url_exception_ignored_urls_filter', 10, 2);
+function headless_url_exception_ignored_urls_filter($will_redirect, $new_url)
+{
+    global $wp;
+
+    $ignored_urls = get_option('headless_url_exception_ignored_urls', '');
+
+    if (!empty($ignored_urls)) {
+
+        $ignored_urls_array = array_map('trim', explode("\n", $ignored_urls));
+
+        // Get the current request path
+        $current_request = $wp->request;
+
+        // Skip redirection
+        foreach ($ignored_urls_array as $ignored_url) {
+            if (strpos($current_request, $ignored_url) !== false) {
+                return false;
+            }
+        }
+    }
+
+    // For no exception match, proceed with redirection
+    return $will_redirect;
+}
