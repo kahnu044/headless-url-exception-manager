@@ -113,7 +113,8 @@ function headless_url_exception_ignored_urls_filter($will_redirect, $new_url)
 
         // Skip redirection
         foreach ($ignored_urls_array as $ignored_url) {
-            if (strpos($current_request, $ignored_url) !== false) {
+            // If it's a path, use strpos for normal URL path matching
+            if (strpos($current_request, trim($ignored_url, '/')) !== false) {
                 return false;
             }
         }
