@@ -2,9 +2,11 @@
 
 /**
  * Plugin Name: Headless URL Exception Manager
+ * Plugin URI: https://github.com/kahnu044/headless-url-exception-manager
  * Description: Allows users to input URLs that should be ignored from redirection in Headless Mode.
  * Version: 1.0.0
  * Author: kahnu044
+ * Author URI: https://github.com/kahnu044
  */
 
 
