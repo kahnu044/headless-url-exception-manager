@@ -11,53 +11,59 @@ Headless URL Exception Manager is a WordPress plugin that allows administrators 
 
 ## Installation
 
-1. Download the plugin as a `.zip` file or clone the repository.
-   ```bash
-   git clone https://github.com/kahnu044/headless-url-exception-manager.git
-   ```
-2. Upload the plugin folder to the `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Navigate to the **Settings > Headless URL Exception** page to configure the URLs you wish to exclude from redirection.
+### Prerequisites
 
-## Usage
+Before installing **Headless URL Exception Manager**, you need to install and activate the **Headless Mode** plugin. The **Headless Mode** plugin is responsible for performing the redirection logic, and this plugin adds the functionality to exclude certain URLs from being redirected.
 
-1. After activation, go to the **Settings > Headless URL Exception** page.
-2. In the textarea, add URLs you wish to exclude from redirection. Each URL should be on a new line. For example:
+1. Install **[Headless Mode](https://github.com/Shelob9/headless-mode)** by following the instructions in their [repository](https://github.com/Shelob9/headless-mode).
+2. After installing the **Headless Mode** plugin, download and install **Headless URL Exception Manager**:
+
+   - Download the plugin as a `.zip` file or clone the repository.
+     ```bash
+     git clone https://github.com/kahnu044/headless-url-exception-manager.git
+     ```
+   - Upload the plugin folder to the `/wp-content/plugins/` directory.
+   - Activate the plugin through the **Plugins** menu in WordPress.
+
+### Configure the Plugin
+
+After activation, follow these steps to configure the plugin:
+
+1. Go to **Settings > Headless URL Exception** in the WordPress admin menu.
+2. In the **Ignored URLs** textarea, add the URLs you want to exclude from redirection. Each URL should be on a new line. For example:
    ```
    /sample-page
    /another-page
    /category/example
    ```
-3. Save your changes.
-4. The URLs listed in the textarea will now be ignored by the Headless Mode redirection mechanism.
+3. Save your changes. The listed URLs will now be excluded from redirection by the **Headless Mode** plugin.
+
+## Usage
+
+- The URLs listed in the **Ignored URLs** setting will be checked against the current request path. If a match is found, the URL will be excluded from redirection in **Headless Mode**.
 
 ### URL Matching
 
-The plugin matches URLs using a partial match strategy. This means if the current request path contains any of the ignored URLs you input, the page will be excluded from redirection.
+The plugin matches URLs using a partial match strategy. For example, if you input `/sample-page`, it will prevent redirection for any request containing `/sample-page`.
 
-For example, if you input `/sample-page`, the plugin will prevent redirection for any request containing that string, including:
-- `/sample-page`
-- `/sample-page/sub-page`
+## Filter Hook
 
-## Hooks
+This plugin uses the `headless_mode_will_redirect` filter hook provided by the **Headless Mode** plugin. The hook checks the list of ignored URLs before allowing any redirection. If a URL matches any of the ignored patterns, the redirection is skipped.
 
-This plugin utilizes the `headless_mode_will_redirect` filter to control whether a redirect should occur.
-
-### Filter: `headless_mode_will_redirect`
-
-This filter checks the list of ignored URLs before allowing any redirection. If a URL matches any of the ignored patterns, the redirection is skipped.
+### Filter Hook Example:
 
 ```php
 apply_filters('headless_mode_will_redirect', $will_redirect, $new_url);
 ```
 
-## Customization
+- `$will_redirect`: Boolean value indicating whether the redirection should happen.
+- `$new_url`: The URL to which the request is attempting to redirect.
 
-You can customize the plugin by modifying the URLs excluded from redirection via the **Ignored URLs** setting. This can be done directly from the WordPress admin panel without needing to touch the code.
+You can customize the redirection behavior by utilizing this filter hook if needed.
 
 ## Development
 
-Feel free to fork this repository and contribute to its development. You can install the plugin as follows:
+Feel free to fork this repository and contribute to its development. To install the plugin for development, follow these steps:
 
 ```bash
 git clone https://github.com/kahnu044/headless-url-exception-manager.git
@@ -75,14 +81,3 @@ cd headless-url-exception-manager
 ## License
 
 This plugin is open-source and licensed under the [MIT License](LICENSE).
-```
-
-### Key Sections:
-- **Features**: A quick summary of what the plugin does.
-- **Installation**: How to install and activate the plugin in WordPress.
-- **Usage**: Instructions on how to use the plugin once it's installed.
-- **Hooks**: Information about any WordPress hooks used in the plugin.
-- **Customization**: How to modify the settings dynamically via the admin panel.
-- **Development**: For developers who want to contribute or fork the project.
-
-Feel free to modify the `README.md` further as needed!
